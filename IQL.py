@@ -27,6 +27,7 @@ class IQL(object):
 
         self.actor = Actor(state_dim, action_dim, 256, 3).to(device)
         self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=3e-4)
+        self.actor_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.actor_optimizer, T_max=int(1e6))
 
         self.critic = Critic(state_dim, action_dim).to(device)
         self.critic_target = copy.deepcopy(self.critic)
@@ -85,19 +86,18 @@ class IQL(object):
             exp_a = torch.exp((q - v) * self.temperature)
             exp_a = torch.clamp(exp_a, max=100.0).squeeze(-1).detach()
 
-        dist = self.actor(states)
-        log_probs = dist.log_prob(actions)
-        actor_loss = -(exp_a * log_probs).mean()
+        dist, mu = self.actor(states)
+        # log_probs = dist.log_prob(actions)
+        # actor_loss = -(exp_a * log_probs).mean()
+        actor_loss = (exp_a.unsqueeze(-1) * ((mu - actions)**2)).mean()
 
         self.actor_optimizer.zero_grad()
         actor_loss.backward()
         self.actor_optimizer.step()
+        self.actor_scheduler.step()
 
         logger.log('train/actor_loss', actor_loss, self.total_it)
         logger.log('train/adv', (q - v).mean(), self.total_it)
-
-    def train(self):
-        pass
 
     def select_action(self, state):
         state = torch.FloatTensor(state.reshape(1, -1)).to(device)

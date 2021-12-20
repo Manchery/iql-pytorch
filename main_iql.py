@@ -69,10 +69,10 @@ if __name__ == "__main__":
     parser.add_argument("--seed", default=0, type=int)              # Sets Gym, PyTorch and Numpy seeds
     parser.add_argument("--eval_freq", default=1e4, type=int)       # How often (time steps) we evaluate
     parser.add_argument("--max_timesteps", default=1e6, type=int)   # Max time steps to run environment
-    parser.add_argument("--save_model", action="store_true")        # Save model and optimizer parameters
+    parser.add_argument("--save_model", action="store_true", default=True)        # Save model and optimizer parameters
     parser.add_argument('--eval_episodes', default=10, type=int)
     parser.add_argument('--save_video', default=False, action='store_true')
-    parser.add_argument("--normalize", default=True)
+    parser.add_argument("--normalize", default=True, action='store_false')
     # IQL
     parser.add_argument("--batch_size", default=256, type=int)      # Batch size for both actor and critic
     parser.add_argument("--temperature", default=3.0, type=float)
@@ -138,7 +138,7 @@ if __name__ == "__main__":
     kwargs = {
         "state_dim": state_dim,
         "action_dim": action_dim,
-        # TD3
+        # IQL
         "discount": args.discount,
         "tau": args.tau,
         "temperature": args.temperature,
@@ -163,6 +163,7 @@ if __name__ == "__main__":
         mean, std = replay_buffer.normalize_states()
     else:
         mean, std = 0, 1
+    print(mean, std)
 
     logger = Logger(args.work_dir, use_tb=True)
     video = VideoRecorder(dir_name=args.video_dir)

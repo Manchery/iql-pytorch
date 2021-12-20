@@ -58,11 +58,12 @@ class Actor(nn.Module):
         dist = TransformedDistribution(dist, TanhBijector())
         dist = torch.distributions.Independent(dist, 1)
 
-        return dist
+        return dist, mu
 
     def get_action(self, states, det=True):
-        dist = self.forward(states)
-        dist = SampleDist(dist)
+        dist, mu = self.forward(states)
+        # dist = SampleDist(dist)
+        return mu
         if det:
             return dist.mode()
         else:
