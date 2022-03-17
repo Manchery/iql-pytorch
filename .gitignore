@@ -1,3 +1,6 @@
 runs
 __pycache__
 .git
+make_tasks.py
+tasks.txt
+models

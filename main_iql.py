@@ -69,10 +69,10 @@ if __name__ == "__main__":
     parser.add_argument("--seed", default=0, type=int)              # Sets Gym, PyTorch and Numpy seeds
     parser.add_argument("--eval_freq", default=1e4, type=int)       # How often (time steps) we evaluate
     parser.add_argument("--max_timesteps", default=1e6, type=int)   # Max time steps to run environment
-    parser.add_argument("--save_model", action="store_true", default=True)        # Save model and optimizer parameters
+    parser.add_argument("--save_model", action="store_true", default=False)        # Save model and optimizer parameters
     parser.add_argument('--eval_episodes', default=10, type=int)
     parser.add_argument('--save_video', default=False, action='store_true')
-    parser.add_argument("--normalize", default=True, action='store_false')
+    parser.add_argument("--normalize", default=False, action='store_true')
     # IQL
     parser.add_argument("--batch_size", default=256, type=int)      # Batch size for both actor and critic
     parser.add_argument("--temperature", default=3.0, type=float)
@@ -80,10 +80,7 @@ if __name__ == "__main__":
     parser.add_argument("--tau", default=0.005, type=float)
     parser.add_argument("--discount", default=0.99, type=float)     # Discount factor
     # Work dir
-    parser.add_argument('--notes', default=None, type=str)
     parser.add_argument('--work_dir', default='tmp', type=str)
-    # Misc
-    parser.add_argument('--antmaze_center_reward', default=False, action='store_true')
     args = parser.parse_args()
     args.cooldir = generate_slug(2)
 
@@ -104,8 +101,6 @@ if __name__ == "__main__":
     else:
         raise NotImplementedError
     exp_name += '-' + args.cooldir
-    if args.notes is not None:
-        exp_name = args.notes + '_' + exp_name
     args.work_dir = args.work_dir + '/' + exp_name
     utils.make_dir(args.work_dir)
 
@@ -153,20 +148,18 @@ if __name__ == "__main__":
 
     replay_buffer = utils.ReplayBuffer(state_dim, action_dim)
     replay_buffer.convert_D4RL(d4rl.qlearning_dataset(env))
-    if 'antmaze' in args.env and args.antmaze_center_reward:
+    if 'antmaze' in args.env:
         # Center reward for Ant-Maze
         # See https://github.com/aviralkumar2907/CQL/blob/master/d4rl/examples/cql_antmaze_new.py#L22
-        # replay_buffer.reward = (replay_buffer.reward - 0.5) * 4.0
         replay_buffer.reward = replay_buffer.reward - 1.0
     if args.normalize:
-        # TODO: whether to normalize for antmaze?
         mean, std = replay_buffer.normalize_states()
     else:
         mean, std = 0, 1
-    print(mean, std)
 
     logger = Logger(args.work_dir, use_tb=True)
     video = VideoRecorder(dir_name=args.video_dir)
+
     for t in trange(int(args.max_timesteps)):
         policy.train(replay_buffer, args.batch_size, logger=logger)
         # Evaluate episode

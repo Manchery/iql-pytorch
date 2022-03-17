@@ -1,8 +1,5 @@
-import numpy as np
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from typing import Any, Callable, Dict, Optional, Sequence, Tuple
+from typing import Callable, Optional
 
 from torch.nn.modules.dropout import Dropout
 
@@ -21,12 +18,12 @@ class MLP(nn.Module):
     ) -> None:
         super().__init__()
 
-        self.afflines = []
-        self.afflines.append(nn.Linear(in_dim, hidden_dim))
+        self.affines = []
+        self.affines.append(nn.Linear(in_dim, hidden_dim))
         for i in range(n_layers-2):
-            self.afflines.append(nn.Linear(hidden_dim, hidden_dim))
-        self.afflines.append(nn.Linear(hidden_dim, out_dim))
-        self.afflines = nn.ModuleList(self.afflines)
+            self.affines.append(nn.Linear(hidden_dim, hidden_dim))
+        self.affines.append(nn.Linear(hidden_dim, out_dim))
+        self.affines = nn.ModuleList(self.affines)
 
         self.activations = activations()
         self.activate_final = activate_final
@@ -35,9 +32,9 @@ class MLP(nn.Module):
             self.dropout = Dropout(self.dropout_rate)
 
     def forward(self, x):
-        for i in range(len(self.afflines)):
-            x = self.afflines[i](x)
-            if i != len(self.afflines)-1 or self.activate_final:
+        for i in range(len(self.affines)):
+            x = self.affines[i](x)
+            if i != len(self.affines)-1 or self.activate_final:
                 x = self.activations(x)
                 if self.dropout_rate is not None:
                     x = self.dropout(x)

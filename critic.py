@@ -1,10 +1,7 @@
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import Any, Callable, Dict, Optional, Sequence, Tuple
 
-from torch.nn.modules.dropout import Dropout
 from common import MLP
 
 
@@ -23,42 +20,11 @@ class ValueCritic(nn.Module):
         return self.mlp(state)
 
 
-class Q(nn.Module):
-    def __init__(
-        self,
-        in_dim,
-        hidden_dim,
-        n_layers,
-        **kwargs
-    ) -> None:
-        super().__init__()
-        self.mlp = MLP(in_dim, 1, hidden_dim, n_layers, **kwargs)
-
-    def forward(self, state, action):
-        return self.mlp(torch.cat((state, action), dim=-1))
-
-
-class DoubleCritic(nn.Module):
-    def __init__(
-        self,
-        in_dim,
-        hidden_dim,
-        n_layers,
-        **kwargs
-    ) -> None:
-        super().__init__()
-        self.q1 = Q(in_dim, hidden_dim, n_layers, **kwargs)
-        self.q2 = Q(in_dim, hidden_dim, n_layers, **kwargs)
-
-    def forward(self, state, action):
-        q1 = self.q1(state, action)
-        q2 = self.q2(state, action)
-        return q1, q2
-
-# From TD3_BC
-
-
 class Critic(nn.Module):
+    """
+    From TD3+BC
+    """
+
     def __init__(self, state_dim, action_dim):
         super(Critic, self).__init__()
 

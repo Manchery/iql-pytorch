@@ -86,9 +86,7 @@ class IQL(object):
             exp_a = torch.exp((q - v) * self.temperature)
             exp_a = torch.clamp(exp_a, max=100.0).squeeze(-1).detach()
 
-        dist, mu = self.actor(states)
-        # log_probs = dist.log_prob(actions)
-        # actor_loss = -(exp_a * log_probs).mean()
+        mu = self.actor(states)
         actor_loss = (exp_a.unsqueeze(-1) * ((mu - actions)**2)).mean()
 
         self.actor_optimizer.zero_grad()
@@ -117,24 +115,16 @@ class IQL(object):
 
     def save(self, model_dir):
         torch.save(self.critic.state_dict(), os.path.join(model_dir, f"critic_s{str(self.total_it)}.pth"))
+        torch.save(self.critic_target.state_dict(), os.path.join(model_dir, f"critic_target_s{str(self.total_it)}.pth"))
         torch.save(self.critic_optimizer.state_dict(), os.path.join(
             model_dir, f"critic_optimizer_s{str(self.total_it)}.pth"))
 
         torch.save(self.actor.state_dict(), os.path.join(model_dir, f"actor_s{str(self.total_it)}.pth"))
         torch.save(self.actor_optimizer.state_dict(), os.path.join(
             model_dir, f"actor_optimizer_s{str(self.total_it)}.pth"))
+        torch.save(self.actor_scheduler.state_dict(), os.path.join(
+            model_dir, f"actor_scheduler_s{str(self.total_it)}.pth"))
 
         torch.save(self.value.state_dict(), os.path.join(model_dir, f"value_s{str(self.total_it)}.pth"))
         torch.save(self.value_optimizer.state_dict(), os.path.join(
             model_dir, f"value_optimizer_s{str(self.total_it)}.pth"))
-
-    # def load(self, filename):
-    #     self.critic.load_state_dict(torch.load(filename + "_critic"))
-    #     self.critic_optimizer.load_state_dict(torch.load(filename + "_critic_optimizer"))
-    #     self.critic_target = copy.deepcopy(self.critic)
-
-    #     self.actor.load_state_dict(torch.load(filename + "_actor"))
-    #     self.actor_optimizer.load_state_dict(torch.load(filename + "_actor_optimizer"))
-
-    #     self.value.load_state_dict(torch.load(filename + "_value"))
-    #     self.value_optimizer.load_state_dict(torch.load(filename + "_value_optimizer"))
