@@ -1,8 +1,8 @@
-# IQL implementation in PyTorch
+# IQL Implementation in PyTorch
 
 ## IQL
 
-This repo is an unofficial PyTorch implementation of In-sample Q-Learning (Implicit Q-Learning).
+This repo is an unofficial implementation of In-sample Q-Learning (Implicit Q-Learning) in PyTorch.
 
 ```
 @inproceedings{
@@ -15,7 +15,7 @@ This repo is an unofficial PyTorch implementation of In-sample Q-Learning (Impli
 }
 ```
 
-## Run
+## Train
 
 ### Gym-MuJoCo
 
@@ -29,7 +29,7 @@ python main_iql.py --env halfcheetah-medium-v2 --expectile 0.7 --temperature 3.0
 python main_iql.py --env antmaze-medium-play-v2 --expectile 0.9 --temperature 10.0 --eval_freq 50000 --eval_episodes 100
 ```
 
-## Result
+## Results
 
 ![mujoco_results](imgs/mujoco_results.png)
 
