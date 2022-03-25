@@ -2,7 +2,7 @@
 
 ## IQL
 
-This repo is an unofficial implementation of In-sample Q-Learning (Implicit Q-Learning) in PyTorch.
+This repo is an unofficial implementation of **In-sample Q-Learning (Implicit Q-Learning)** in PyTorch.
 
 ```
 @inproceedings{
