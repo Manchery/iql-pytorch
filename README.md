@@ -2,12 +2,12 @@
 
 ## IQL
 
-This repo is an unofficial implementation of **In-sample Q-Learning (Implicit Q-Learning)** in PyTorch.
+This repo is an unofficial implementation of **Implicit Q-Learning (In-sample Q-Learning)** in PyTorch.
 
 ```
 @inproceedings{
     kostrikov2022offline,
-    title={Offline Reinforcement Learning with In-sample Q-Learning},
+    title={Offline Reinforcement Learning with Implicit Q-Learning},
     author={Ilya Kostrikov and Ashvin Nair and Sergey Levine},
     booktitle={International Conference on Learning Representations},
     year={2022},
