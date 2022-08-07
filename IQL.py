@@ -81,7 +81,7 @@ class IQL(object):
     def update_actor(self, states, actions, logger=None):
         with torch.no_grad():
             v = self.value(states)
-            q1, q2 = self.critic(states, actions)
+            q1, q2 = self.critic_target(states, actions)
             q = torch.minimum(q1, q2)
             exp_a = torch.exp((q - v) * self.temperature)
             exp_a = torch.clamp(exp_a, max=100.0).squeeze(-1).detach()
