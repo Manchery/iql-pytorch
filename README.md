@@ -15,6 +15,8 @@ This repo is an unofficial implementation of **Implicit Q-Learning (In-sample Q-
 }
 ```
 
+**Note**: Reward standardization (_We standardize MuJoCo locomotion task rewards by dividing by the difference of returns of the best and worst trajectories in each dataset_) used in [official implementation](https://github.com/ikostrikov/implicit_q_learning/blob/09d700248117881a75cb21f0adb95c6c8a694cb2/train_offline.py#L51C18-L51C18) is missed in this implementation. One can easily add it by itself.
+
 ## Train
 
 ### Gym-MuJoCo
