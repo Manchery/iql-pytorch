@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     # make directory
     ts = time.gmtime()
-    ts = time.strftime("%m-%d-%H:%M", ts)
+    ts = time.strftime("%m-%d-%H-%M", ts)
     exp_name = str(args.env) + '-' + ts + '-bs' + str(args.batch_size) + '-s' + str(args.seed)
     if args.policy == 'IQL':
         exp_name += '-t' + str(args.temperature) + '-e' + str(args.expectile)
